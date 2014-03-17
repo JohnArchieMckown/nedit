@@ -1,0 +1,12 @@
+#
+# Makefile for nedit 5.1 for os/390 v2r7 and v2r8
+#
+CC=c89
+AR=ar
+#
+# For editres, add -DEDITRES to CFLAGS and -lXmu to LIBS
+CFLAGS=-W c,dll -D_ALL_SOURCE -DMAXPATHLEN=256 -DUSE_DIRENT
+ARFLAGS=-urs
+LIBS=/usr/lib/Xm.x /usr/lib/X11.x /usr/lib/SM.x /usr/lib/ICE.x
+
+include Makefile.common

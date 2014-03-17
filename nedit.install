@@ -1,0 +1,32 @@
+#!/bin/sh
+# nedit install file
+scriptName=`basename $0`
+if [ $# != 2 ]; then
+  echo "Usage: $scriptName archive install_dir"
+  exit
+fi
+archive=$1
+installDir=$2
+
+# unwind and build
+echo "$archive was installed by $scriptName on `date`"
+echo "unwinding via the commands 'gzip' and 'pax' ..."
+gzip -c -d $archive | pax -o from=ISO8859-1,to=IBM-1047 -r
+ln -s nedit-5.1.1 nedit
+cd nedit 
+echo "modifying nedit code via the command 'patch' ..."
+patch -bc -i ../os390.diffs -p 0
+echo "copying nedit makefile for OS/390 ..."
+cp ../Makefile.os390 makefiles
+echo "building nedit via the command 'make os390' ..."
+_C89_CCMODE=1 make os390
+rc=$?
+echo "return code from make = $rc"
+if [ $rc != 0 ]; then
+  exit $rc
+fi
+
+# install
+echo "copying executables and man pages to $installDir/bin and man ..."
+cp source/nedit $installDir/bin 
+cp nedit.man $installDir/man/$LANG/cat1
